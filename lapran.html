@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Shift 2AN5 - Rapi & Teratur</title>
+    <style>
+        :root { --primary: #2563eb; --success: #16a34a; --bg: #f1f5f9; --card: #ffffff; --text: #1e293b; --border: #e2e8f0; }
+        * { box-sizing: border-box; font-family: sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 500px; }
+        h2 { text-align: center; color: var(--primary); font-weight: 800; font-size: 1.2rem; }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+        input, textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; margin-top: 5px; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .item-row { padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .res-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+        .percent-box { font-weight: bold; color: var(--primary); min-width: 45px; text-align: right; font-size: 0.9rem; }
+        #output { background: #f8fafc; font-family: monospace; font-size: 11px; height: 180px; margin-top: 10px; width: 100%; border: 1px solid #ddd; }
+        .label-mini { font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; display: block; }
+        .psm-header { display: grid; grid-template-columns: 1fr 1fr 1fr 45px; gap: 5px; text-align: center; margin-bottom: 5px; }
+        .psm-header span { font-size: 9px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📊 LAPORAN SHIFT 2AN5</h2>
+
+    <div class="card">
+        <div class="grid-2">
+            <input type="text" id="tgl" value="06.05.26">
+            <input type="text" id="shift" value="1&2">
+        </div>
+        <input type="text" id="toko" value="2AN5 SAT TODANAN" style="margin-top:8px">
+        <input placeholder="Staff (Contoh: Riski, Riyan)" id="staff" style="margin-top:8px">
+        <div class="grid-2" style="margin-top:8px">
+            <input placeholder="Kasir" id="kasir">
+            <input placeholder="Sapamen" id="sapamen">
+        </div>
+        <div class="grid-2" style="margin-top:8px">
+            <input placeholder="Beanspot" id="bean" value="BASIC✅">
+            <input placeholder="Sapa" id="sapa" value="✅">
+        </div>
+    </div>
+
+    <div class="card">
+        <span class="label-mini">Sales Data (Wajib Diisi)</span>
+        <div class="grid-3">
+            <input type="text" id="spd" placeholder="SPD">
+            <input type="number" id="std" placeholder="STD">
+            <input type="text" id="apc" placeholder="APC">
+        </div>
+    </div>
+
+    <div class="card">
+        <span class="label-mini" style="color: var(--primary)">Clerek & Promo Cashback</span>
+        <div id="clerek-container"></div>
+        <div id="promo-container" style="border-top: 1px dashed #eee; margin-top: 10px; padding-top: 10px;"></div>
+    </div>
+
+    <div class="card">
+        <span class="label-mini" style="color: var(--primary)">Pencapaian PSM</span>
+        <div class="psm-header" style="margin-top: 10px;">
+            <span>Target</span><span>Act</span><span>Total</span><span>%</span>
+        </div>
+        <div id="psm-container"></div>
+        <div style="text-align: center; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px;">
+            <span class="label-mini">TOTAL AKUMULASI PSM:</span>
+            <b id="totalpsm" style="font-size: 1.3rem; color:var(--success)">0%</b>
+        </div>
+    </div>
+
+    <div class="card">
+        <span class="label-mini" style="color: var(--primary)">Program PWP & Tebus</span>
+        <div id="prog-container"></div>
+    </div>
+
+    <div class="card">
+        <span class="label-mini">Keterangan Tambahan</span>
+        <textarea id="tambahan" style="height: 120px;" placeholder="Isi detail di sini..."></textarea>
+    </div>
+
+    <div class="card" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+        <span class="label-mini">⚙️ Pengaturan Item (Lost Edit)</span>
+        <textarea id="listclerek" style="height: 40px;">Voucher
+kopi rtd
+rte</textarea>
+        <textarea id="listpromo" style="height: 40px; margin-top:5px;">Cb setuju 1-15
+Cb homecare 1-31
+Cb JSM.</textarea>
+        <textarea id="listpsm" style="height: 50px; margin-top:5px;">FRISIAN FLAG
+AQUA
+PUCUK HARUM
+HAPPY TOS
+POCKY
+CIPTADENT
+PANTENE
+SOKLIN</textarea>
+        <textarea id="listprog" style="height: 40px; margin-top:5px;">PWP
+SERBA GRATIS
+TEBUS TEH SEGAR</textarea>
+        <button class="btn-primary" onclick="initApp()">🔄 REFRESH DAFTAR</button>
+    </div>
+
+    <button class="btn-primary" onclick="generate()">👁️ PREVIEW LAPORAN</button>
+    <textarea id="output" readonly></textarea>
+    <button class="btn-success" onclick="kirimWA()">🚀 KIRIM KE WHATSAPP</button>
+</div>
+
+<script>
+let lClerek = [], lPromo = [], lPSM = [], lProg = [];
+
+function initApp() {
+    lClerek = document.getElementById("listclerek").value.split("\n").filter(i => i.trim() !== "");
+    let hClerek = "";
+    lClerek.forEach((p, i) => hClerek += `<div class="res-row"><span class="label-mini" style="flex:1">${p}</span><input type="text" id="clerek${i}" placeholder="..." style="width:120px; margin:0"></div>`);
+    document.getElementById("clerek-container").innerHTML = hClerek;
+
+    lPromo = document.getElementById("listpromo").value.split("\n").filter(i => i.trim() !== "");
+    let hPromo = "";
+    lPromo.forEach((p, i) => hPromo += `<div class="res-row"><span class="label-mini" style="flex:1">${p}</span><input type="text" id="promo${i}" placeholder="0/0" style="width:80px; margin:0"></div>`);
+    document.getElementById("promo-container").innerHTML = hPromo;
+
+    lPSM = document.getElementById("listpsm").value.split("\n").filter(i => i.trim() !== "");
+    let hPSM = "";
+    lPSM.forEach((p, i) => hPSM += createRow("psm" + i, p));
+    document.getElementById("psm-container").innerHTML = hPSM;
+
+    lProg = document.getElementById("listprog").value.split("\n").filter(i => i.trim() !== "");
+    let hProg = "";
+    lProg.forEach((p, i) => hProg += createRow("prog" + i, p));
+    document.getElementById("prog-container").innerHTML = hProg;
+
+    // Keterangan dengan enter agar ada jarak
+    document.getElementById("tambahan").value = "Telur : 0\n\nNew member : \n\nPenggunaan member : \n\nSKI : 13";
+}
+
+function createRow(id, label) {
+    return `<div class="item-row"><span class="label-mini">${label}</span><div class="res-row"><div class="grid-3" style="flex:1"><input type="number" id="${id}_t" placeholder="Tgt" oninput="hitung()"><input type="number" id="${id}_a" placeholder="Act" oninput="hitung()"><input type="number" id="${id}_tot" placeholder="Tot" oninput="hitung()"></div><span class="percent-box" id="${id}_h">0%</span></div></div>`;
+}
+
+function hitung() {
+    let sT = 0, sTot = 0;
+    lPSM.forEach((_, i) => {
+        let t = parseFloat(document.getElementById("psm"+i+"_t").value)||0, tot = parseFloat(document.getElementById("psm"+i+"_tot").value)||0;
+        let h = t > 0 ? (tot/t)*100 : 0;
+        document.getElementById("psm"+i+"_h").innerText = Math.floor(h) + "%";
+        sT += t; sTot += tot;
+    });
+    document.getElementById("totalpsm").innerText = Math.floor(sT > 0 ? (sTot/sT)*100 : 0) + "%";
+
+    lProg.forEach((_, i) => {
+        let t = parseFloat(document.getElementById("prog"+i+"_t").value)||0, tot = parseFloat(document.getElementById("prog"+i+"_tot").value)||0;
+        document.getElementById("prog"+i+"_h").innerText = Math.floor(t > 0 ? (tot/t)*100 : 0) + "%";
+    });
+}
+
+function generate() {
+    let txt = `*Laporan shift ${document.getElementById("shift").value}*\n*Tgl : ${document.getElementById("tgl").value}*\n*Toko : ${document.getElementById("toko").value}*\n*Beanspot* : ${document.getElementById("bean").value}\n*Sapa* : ${document.getElementById("sapa").value}\n\n`;
+    
+    txt += `*Staff* : ${document.getElementById("staff").value || '-'}\n*Kasir* : ${document.getElementById("kasir").value || '-'}\n*Sapamen* : ${document.getElementById("sapamen").value || '-'}\n\n`;
+    
+    txt += `*(SPD,STD,APC/wajib di isi)*\n*SPD* : ${document.getElementById("spd").value || 0}\n*STD* : ${document.getElementById("std").value || 0}\n*APC* : ${document.getElementById("apc").value || 0}\n\n`;
+    
+    txt += `*CLEREK*\n(target RTD 5, RTE 5/Shift)\n`;
+    lClerek.forEach((p, i) => txt += `*${p}*: ${document.getElementById("clerek"+i).value || '-'}\n`);
+    
+    txt += `\n*4 promo cashback*\nPromo. : vocher out / vocher / redeem\n`;
+    lPromo.forEach((p, i) => txt += `${p} : ${document.getElementById("promo" + i).value || '0/0'}\n`);
+    
+    txt += `\n*PSM. : tgt/act hr ini/total/acv%*\n`;
+    let sT = 0, sA = 0, sTot = 0;
+    lPSM.forEach((p, i) => {
+        let t = document.getElementById("psm"+i+"_t").value||0, a = document.getElementById("psm"+i+"_a").value||0, tot = document.getElementById("psm"+i+"_tot").value||0;
+        txt += `${p.padEnd(12)} : ${t}/${a}/${tot}/${document.getElementById("psm"+i+"_h").innerText}\n`;
+        sT += +t; sA += +a; sTot += +tot;
+    });
+    txt += `*TOTAL PSM* : ${sT}/${sA}/${sTot}/${document.getElementById("totalpsm").innerText}\n\n`;
+
+    lProg.forEach((p, i) => {
+        let t = document.getElementById("prog"+i+"_t").value||0, tot = document.getElementById("prog"+i+"_tot").value||0;
+        let unit = p.toUpperCase().includes("GRATIS") ? "paket" : "pcs";
+        txt += `*${p}* (target ${t}${unit}/shift) :\n${t}/${tot}/${document.getElementById("prog"+i+"_h").innerText}\n\n`;
+    });
+
+    txt += `Qty sales /OH\n\n${document.getElementById("tambahan").value}`;
+    document.getElementById("output").value = txt;
+    return txt;
+}
+
+function kirimWA() { window.open("https://api.whatsapp.com/send?phone=6285727378816&text=" + encodeURIComponent(generate())); }
+window.onload = initApp;
+</script>
+</body>
+</html>
